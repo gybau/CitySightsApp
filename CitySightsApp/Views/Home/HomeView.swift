@@ -21,14 +21,14 @@ struct HomeView: View {
                 VStack(alignment: .leading) {
                     HStack {
                         Image(systemName: "location")
-                        Text("San Francisco")
+                        Text("Wrocław")
                         Spacer()
                         Text("Show map View")
                     }
                     Divider()
                     BusinessList()
                     
-                }
+                }.padding([.horizontal, .top])
             }
             
         } else {
