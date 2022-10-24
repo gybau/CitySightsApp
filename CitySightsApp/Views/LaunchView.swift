@@ -6,16 +6,32 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct LaunchView: View {
+    
+    @EnvironmentObject var model:ContentModel
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        
+        // Detect the authorization status of the user
+        if model.authorizationState == .notDetermined {
+            
+            // TODO: If undetermined show onboarding screen
+            
         }
-        .padding()
+        else if model.authorizationState == .authorizedWhenInUse ||
+                    model.authorizationState == .authorizedAlways {
+            
+            // If authorized show home view
+            HomeView()
+            
+        }
+        else {
+            
+            // TODO: If denied show denied view
+            
+        }
     }
 }
 
