@@ -11,6 +11,8 @@ import CoreLocation
 class ContentModel: NSObject, CLLocationManagerDelegate, ObservableObject {
     
     var locationManager = CLLocationManager()
+    @Published var restaurants = [Business]()
+    @Published var sights = [Business]()
     
     override init() {
         
@@ -42,11 +44,74 @@ class ContentModel: NSObject, CLLocationManagerDelegate, ObservableObject {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         // Gives us the location of the user
-        print(locations.first ?? "no locations available")
+        let userLocation = locations.first
         
-        // TODO: Once we have the location, pass it into the YELP api
+        if userLocation != nil {
+            
+            // Stop requesting the location after we get it once
+            locationManager.stopUpdatingLocation()
+            
+            // Once we have the location, pass it into the YELP api
+            getBussinesses(category: Constants.restaurantsKey, location: userLocation!)
+            getBussinesses(category: Constants.sightsKey, location: userLocation!)
+        }
         
-        // Stop requesting the location after we get it once
-        locationManager.stopUpdatingLocation()
+        
+        
+        
+        
+    }
+    
+    // MARK: Yelp API methods
+    func getBussinesses(category: String, location:CLLocation) {
+        
+        // Create URL
+        var urlComponents = URLComponents(string: Constants.apiUrl)
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "latitude", value: String(location.coordinate.latitude)),
+            URLQueryItem(name: "longitude", value: String(location.coordinate.longitude)),
+            URLQueryItem(name: "categories", value: category),
+            URLQueryItem(name: "limit", value: "6")
+        ]
+        let url = urlComponents?.url
+        
+        if let url = url {
+            
+            // Create URL Request
+            var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10.0)
+            request.httpMethod = "GET"
+            request.addValue("Bearer \(Constants.apiKey)", forHTTPHeaderField: "Authorization")
+            
+            // Get URL Session
+            let session = URLSession.shared
+            
+            // Create Data Task
+            let dataTask = session.dataTask(with: request) { data, response, error in
+                
+                if error == nil {
+                    do {
+                        // Parse JSON
+                        let decoder = JSONDecoder()
+                        let result = try decoder.decode(BusinessSearch.self, from: data!)
+                        
+                        DispatchQueue.main.async {
+                            switch category {
+                            case Constants.restaurantsKey:
+                                self.restaurants = result.businesses
+                            case Constants.sightsKey:
+                                self.sights = result.businesses
+                            default:
+                                break
+                            }
+                        }
+                    } catch {
+                        print(error)
+                    }
+                }
+                
+            }
+            // Start the data task
+            dataTask.resume()
+        }
     }
 }
