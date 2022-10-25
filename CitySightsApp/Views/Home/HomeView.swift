@@ -16,22 +16,25 @@ struct HomeView: View {
     var body: some View {
         
         if model.restaurants.count != 0 || model.sights.count != 0 {
-            // If there is data, determine if we should show the map or the list
-            if !isMapShowing {
-                VStack(alignment: .leading) {
-                    HStack {
-                        Image(systemName: "location")
-                        Text("Wrocław")
-                        Spacer()
-                        Text("Show map View")
-                    }
-                    Divider()
-                    BusinessList()
-                    
-                }.padding([.horizontal, .top])
-            }
             
-        } else {
+            NavigationView {
+                // If there is data, determine if we should show the map or the list
+                if !isMapShowing {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Image(systemName: "location")
+                            Text("Wrocław")
+                            Spacer()
+                            Text("Show map View")
+                        }
+                        Divider()
+                        BusinessList()
+                        
+                    }.padding([.horizontal, .top])
+                }
+            }.buttonStyle(.plain)
+        }
+        else {
             // Show loading spinner if waiting for data fetch
             ProgressView()
         }
