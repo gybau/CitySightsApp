@@ -12,6 +12,7 @@ struct HomeView: View {
     
     @EnvironmentObject var model:ContentModel
     @State var isMapShowing = false
+    @State var selectedBusiness:Business?
     
     var body: some View {
         
@@ -28,10 +29,10 @@ struct HomeView: View {
                             Button {
                                 self.isMapShowing = true
                             } label: {
-                                Text("Show map View")
+                                Text("Show map view")
                                     .foregroundColor(.blue)
                             }
-
+                            
                             
                         }
                         Divider()
@@ -40,8 +41,38 @@ struct HomeView: View {
                     }.padding([.horizontal, .top])
                 }
                 else {
-                    BusinessMap()
-                        .ignoresSafeArea()
+                    
+                    ZStack(alignment: .top) {
+                        BusinessMap(selectedBusiness: $selectedBusiness)
+                            .ignoresSafeArea()
+                            .sheet(item: $selectedBusiness) { business in
+                                // Create a business detail instance
+                                // Pass in the selected business
+                                BusinessDetail(business: business)
+                            }
+                        
+                        ZStack {
+                                Rectangle()
+                                    .foregroundColor(.white)
+                                    .cornerRadius(5)
+                                    .frame(height: 48)
+                                HStack {
+                                    Image(systemName: "location")
+                                    Text("Wrocław")
+                                    Spacer()
+                                    Button {
+                                        self.isMapShowing = false
+                                    } label: {
+                                        Text("Show list view")
+                                            .foregroundColor(.blue)
+                                    }
+                                }.padding()
+                            }
+                            .padding()
+                            
+                        
+                    }
+                    
                 }
             }.buttonStyle(.plain)
         }
