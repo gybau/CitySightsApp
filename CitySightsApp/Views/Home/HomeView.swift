@@ -40,7 +40,7 @@ struct HomeView: View {
                     }.padding([.horizontal, .top])
                 }
                 else {
-                    MapView()
+                    BusinessMap()
                         .ignoresSafeArea()
                 }
             }.buttonStyle(.plain)

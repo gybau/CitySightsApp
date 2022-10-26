@@ -8,7 +8,7 @@
 import SwiftUI
 import MapKit
 
-struct MapView: UIViewRepresentable {
+struct BusinessMap: UIViewRepresentable {
     
     @EnvironmentObject var model:ContentModel
     
@@ -39,6 +39,7 @@ struct MapView: UIViewRepresentable {
     func makeUIView(context: Context) -> MKMapView {
             
         let mapView = MKMapView()
+        mapView.delegate = context.coordinator
         
         // Make the user show up on the map
         mapView.showsUserLocation = true
@@ -61,5 +62,44 @@ struct MapView: UIViewRepresentable {
     static func dismantleUIView(_ uiView: MKMapView, coordinator: ()) {
         uiView.removeAnnotations(uiView.annotations)
     }
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator()
+    }
+    
+    class Coordinator: NSObject, MKMapViewDelegate {
+        
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            
+            // If the annotation is the user location don't assign it an AnnotationView
+            if annotation is MKUserLocation {
+                return nil
+            }
+            
+            // Check if there's a reusable annotation before creating a new one
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: Constants.annotationReuseId)
+            
+            // If there isn't then create a new one
+            if annotationView == nil {
+                
+                // Create annotation view for the annotation that was clicked by the user
+                // Reuse identifier let's us reuse an already rendered, scrolled off screen AnnotationView
+                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: Constants.annotationReuseId)
+                
+                annotationView!.canShowCallout = true
+                annotationView!.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+                
+            }
+            else {
+                // We got reusable one
+                annotationView!.annotation = annotation
+            }
+            
+            // Return the annotationView
+            return annotationView
+        }
+        
+    }
+    
 }
 
