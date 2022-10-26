@@ -25,12 +25,23 @@ struct HomeView: View {
                             Image(systemName: "location")
                             Text("Wrocław")
                             Spacer()
-                            Text("Show map View")
+                            Button {
+                                self.isMapShowing = true
+                            } label: {
+                                Text("Show map View")
+                                    .foregroundColor(.blue)
+                            }
+
+                            
                         }
                         Divider()
                         BusinessList()
                         
                     }.padding([.horizontal, .top])
+                }
+                else {
+                    MapView()
+                        .ignoresSafeArea()
                 }
             }.buttonStyle(.plain)
         }
