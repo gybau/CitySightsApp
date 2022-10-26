@@ -10,6 +10,7 @@ import SwiftUI
 struct BusinessDetail: View {
     
     var business: Business
+    @State private var showDirections = false
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -31,7 +32,7 @@ struct BusinessDetail: View {
                     Rectangle()
                         .frame(height: 36)
                         .foregroundColor(business.isClosed! ? .gray : .blue)
-                    Text((business.isClosed!) ? "Closed" : "Open")
+                    Text(business.isClosed! ? "Closed" : "Open")
                         .foregroundColor(.white)
                         .bold()
                         .padding(.leading)
@@ -39,19 +40,8 @@ struct BusinessDetail: View {
             }
             Group {
                 VStack(alignment: .leading) {
-                    // Name
-                    Text(business.name ?? "")
-                        .font(.largeTitle)
-                        .padding()
-                    // Address
-                    if business.location?.displayAddress != nil {
-                        ForEach (business.location!.displayAddress!, id: \.self) { displayLine in
-                            Text(displayLine)
-                                .padding(.horizontal)
-                        }
-                    }
-                    // Rating
-                    Image("regular_\(business.rating ?? 0)")
+                    
+                    BusinessTitle(business: business)
                         .padding()
                     
                     Divider()
@@ -91,7 +81,7 @@ struct BusinessDetail: View {
                 Divider()
                 
                 Button {
-                    // TODO: Get directions button
+                    showDirections = true
                 } label: {
                     ZStack {
                         Rectangle()
@@ -103,6 +93,10 @@ struct BusinessDetail: View {
                             .bold()
                     }
                 }.padding()
+                    .sheet(isPresented: $showDirections) {
+                        DirectionsView(business: business)
+                            .ignoresSafeArea()
+                    }
 
                 
                 
