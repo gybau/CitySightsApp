@@ -17,6 +17,8 @@ class ContentModel: NSObject, CLLocationManagerDelegate, ObservableObject {
     @Published var restaurants = [Business]()
     @Published var sights = [Business]()
     
+    @Published var placemark:CLPlacemark?
+    
     override init() {
         
         // Init method of NSObject
@@ -25,9 +27,13 @@ class ContentModel: NSObject, CLLocationManagerDelegate, ObservableObject {
         // Assign ContentModel as the location manager delegate
         locationManager.delegate = self
         
+        
+        
+    }
+    
+    func requestUserLocationAuthorization() {
         // Request when in use authorization
         locationManager.requestWhenInUseAuthorization()
-        
         
     }
     
@@ -56,6 +62,15 @@ class ContentModel: NSObject, CLLocationManagerDelegate, ObservableObject {
             
             // Stop requesting the location after we get it once
             locationManager.stopUpdatingLocation()
+            
+            let geoCoder = CLGeocoder()
+            
+            geoCoder.reverseGeocodeLocation(userLocation!) { placemarks, error in
+                if error == nil && placemarks != nil {
+                    // Assign the first placemark from the array to the published property
+                    self.placemark = placemarks?.first
+                }
+            }
             
             // Once we have the location, pass it into the YELP api
             getBussinesses(category: Constants.restaurantsKey, location: userLocation!)

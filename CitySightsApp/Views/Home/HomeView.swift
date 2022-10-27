@@ -24,7 +24,7 @@ struct HomeView: View {
                     VStack(alignment: .leading) {
                         HStack {
                             Image(systemName: "location")
-                            Text("Wrocław")
+                            Text(model.placemark?.locality ?? "")
                             Spacer()
                             Button {
                                 self.isMapShowing = true
@@ -36,9 +36,18 @@ struct HomeView: View {
                             
                         }
                         Divider()
-                        BusinessList()
+                        ZStack(alignment: .top) {
+                            BusinessList()
+                            HStack {
+                                Spacer()
+                                YelpAttribution(link: "https://yelp.com")
+                            }
+                            .padding(.trailing, -20)
+                        }
                         
-                    }.padding([.horizontal, .top])
+                    }
+                    .padding([.horizontal, .top])
+                    
                 }
                 else {
                     
@@ -58,7 +67,7 @@ struct HomeView: View {
                                     .frame(height: 48)
                                 HStack {
                                     Image(systemName: "location")
-                                    Text("Wrocław")
+                                    Text(model.placemark?.locality ?? "")
                                     Spacer()
                                     Button {
                                         self.isMapShowing = false

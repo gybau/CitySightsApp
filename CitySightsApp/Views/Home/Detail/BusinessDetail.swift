@@ -41,10 +41,15 @@ struct BusinessDetail: View {
             Group {
                 VStack(alignment: .leading) {
                     
-                    BusinessTitle(business: business)
-                        .padding()
+                    HStack {
+                        BusinessTitle(business: business)
+                            .padding()
+                        Spacer()
+                        YelpAttribution(link: business.url!)
+                    }
                     
-                    Divider()
+                    DashedDivider()
+                        .padding(.horizontal)
                     
                     // Phone
                     HStack {
@@ -53,9 +58,11 @@ struct BusinessDetail: View {
                         Text(business.displayPhone ?? "")
                         Spacer()
                         Link("Call", destination: URL(string: "tel:\(business.phone ?? "")")!)
+                            .foregroundColor(.blue)
                     }.padding()
                     
-                    Divider()
+                    DashedDivider()
+                        .padding(.horizontal)
                     
                     // Reviews
                     HStack {
@@ -64,9 +71,11 @@ struct BusinessDetail: View {
                         Text(String(business.reviewCount ?? 0))
                         Spacer()
                         Link("Read", destination: URL(string: "\(business.url ?? "")")!)
+                            .foregroundColor(.blue)
                     }.padding()
                     
-                    Divider()
+                    DashedDivider()
+                        .padding(.horizontal)
                     
                     // Website
                     HStack {
@@ -76,9 +85,10 @@ struct BusinessDetail: View {
                             .lineLimit(1)
                         Spacer()
                         Link("Visit", destination: URL(string: "\(business.url ?? "")")!)
+                            .foregroundColor(.blue)
                     }.padding()
             }
-                Divider()
+                
                 
                 Button {
                     showDirections = true

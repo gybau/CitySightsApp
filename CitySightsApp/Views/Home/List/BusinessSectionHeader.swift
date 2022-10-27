@@ -20,6 +20,7 @@ struct BusinessSectionHeader: View {
             Text(title)
                 .font(.headline)
         }
+        .frame(height: 45)
     }
 }
 

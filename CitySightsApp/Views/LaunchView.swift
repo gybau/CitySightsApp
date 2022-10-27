@@ -17,7 +17,7 @@ struct LaunchView: View {
         // Detect the authorization status of the user
         if model.authorizationState == .notDetermined {
             
-            // TODO: If undetermined show onboarding screen
+            OnboardingView()
             
         }
         else if model.authorizationState == .authorizedWhenInUse ||
@@ -29,7 +29,7 @@ struct LaunchView: View {
         }
         else {
             
-            // TODO: If denied show denied view
+            DeniedView()
             
         }
     }
